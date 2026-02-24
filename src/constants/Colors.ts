@@ -12,6 +12,7 @@ export const colors = {
   },
   gray: {
     700: "#49454F",
+    500: "#757575"
   },
   black: {
     800: "#1C120D",

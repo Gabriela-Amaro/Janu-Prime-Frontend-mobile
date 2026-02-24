@@ -1,14 +1,9 @@
-
 import { StyleSheet } from "react-native";
 import { colors } from "../../../constants/Colors";
 import { FontFamily, FontSize } from "../../../constants/Fonts";
 
 export const styles = StyleSheet.create({
-  headerContent: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-  greeting: {
+  headerTitle: {
     fontSize: FontSize.title,
     fontFamily: FontFamily.medium,
     color: colors.black[900],
@@ -17,15 +12,23 @@ export const styles = StyleSheet.create({
     flex: 1,
     padding: 16,
   },
-  sectionTitle: {
-    fontSize: FontSize.subtitle,
-    fontFamily: FontFamily.medium,
-    color: colors.gray[700],
-    paddingLeft: 8,
-    marginTop: 16,
-    marginBottom: 16,
+  // --- Busca ---
+  searchContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: colors.brown[800],
+    borderRadius: 12,
+    paddingHorizontal: 13,
+    paddingVertical: 0,
+    gap: 10,
   },
-  // lojas
+  searchInput: {
+    flex: 1,
+    fontSize: FontSize.description,
+    fontFamily: FontFamily.regular,
+    color: colors.white,
+  },
+  // --- Cards ---
   storeCard: {
     flexDirection: "row",
     alignItems: "center",
@@ -57,6 +60,12 @@ export const styles = StyleSheet.create({
     fontFamily: FontFamily.medium,
     color: colors.textPrimary,
   },
+  storeAddress: {
+    fontSize: FontSize.small,
+    fontFamily: FontFamily.regular,
+    color: colors.textSecondary,
+    marginTop: 2,
+  },
   storeDescription: {
     fontSize: FontSize.description,
     fontFamily: FontFamily.regular,
@@ -68,6 +77,33 @@ export const styles = StyleSheet.create({
     fontFamily: FontFamily.regular,
     color: colors.gray[700],
     textAlign: "center",
-    marginTop: 24,
+    marginTop: 40,
+  },
+  switchSearchContainer: {
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+    alignItems: "center",
+    backgroundColor: colors.backgroundSecondary,
+    marginHorizontal: 8,
+    marginBottom: 12,
+    marginTop: 4,
+    borderRadius: 20,
+    padding: 4,
+    height: 40,
+  },
+  switchSearchContent: {
+    flex: 1,
+    height: "100%",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 20,
+  },
+  switchSearchText: {
+    fontSize: FontSize.description,
+    fontFamily: FontFamily.regular,
+    color: colors.textSecondary
+  },
+  switchSearchActivated: {
+    backgroundColor: colors.backgroundPrimary,
   },
 });

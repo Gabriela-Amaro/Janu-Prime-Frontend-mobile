@@ -1,13 +1,141 @@
-import React from "react";
-import { Text, View } from "react-native";
+import React, { useState } from "react";
+import {
+  ActivityIndicator,
+  FlatList,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { EstabelecimentoCard } from "../../../components/EstabelecimentoCard";
+import { ProdutoCard } from "../../../components/ProdutoCard/Busca/ProdutoCard";
 import { ScreenContainer } from "../../../components/ScreenContainer/tabs/ScreenContainer";
+import { styles } from "./styles";
+import { colors } from "../../../constants/Colors";
+import Icon from "../../../constants/icons";
+import { useEstabelecimentos } from "../../../hooks/useEstabelecimentos";
+import { useProdutos } from "../../../hooks/useProdutos";
+
+type SearchMode = "lojas" | "produtos";
 
 export default function Busca() {
+  const [searchText, setSearchText] = useState("");
+  const [mode, setMode] = useState<SearchMode>("lojas");
+
+  const searchQuery = searchText.length >= 1 ? searchText : undefined;
+
+  const { data: estabelecimentos, loading: loadingLojas } =
+    useEstabelecimentos(mode === "lojas" ? searchQuery : undefined);
+
+  const { data: produtos, loading: loadingProdutos } =
+    useProdutos(mode === "produtos" ? searchQuery : undefined);
+
+  const loading = mode === "lojas" ? loadingLojas : loadingProdutos;
+
   return (
-    <ScreenContainer headerContent={<Text>Header</Text>}>
-      {/* Conteúdo da busca */}
-      <View>
-        <Text>Body</Text>
+    <ScreenContainer
+      headerContent={
+        <>
+        {/* Campo de busca */}
+        <View style={styles.searchContainer}>
+          <Icon name="search" size={20} color={colors.white} />
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Procure por Lojas ou Produtos"
+            placeholderTextColor={colors.white}
+            value={searchText}
+            onChangeText={setSearchText}
+            autoCapitalize="none"
+            autoCorrect={false}
+          />
+        </View>
+        </>
+      }
+    >
+      <View style={styles.content}>
+        {/* Switch: Lojas / Produtos */}
+        <View style={styles.switchSearchContainer}>
+          <TouchableOpacity
+            onPress={() => setMode("lojas")}
+            style={[
+              styles.switchSearchContent,
+              mode === "lojas" && styles.switchSearchActivated,
+            ]}
+          >
+            <Text
+              style={[
+                styles.switchSearchText,
+                mode === "lojas" && { color: colors.textPrimary },
+              ]}
+            >
+              Lojas
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => setMode("produtos")}
+            style={[
+              styles.switchSearchContent,
+              mode === "produtos" && styles.switchSearchActivated,
+            ]}
+          >
+            <Text
+              style={[
+                styles.switchSearchText,
+                mode === "produtos" && { color: colors.textPrimary },
+              ]}
+            >
+              Produtos
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Resultados */}
+        {loading ? (
+          <ActivityIndicator
+            size="large"
+            color={colors.brown[800]}
+            style={{ marginTop: 40 }}
+          />
+        ) : mode === "lojas" ? (
+          // === Lista de Lojas ===
+          estabelecimentos.length === 0 ? (
+            <Text style={styles.emptyText}>
+              {searchText.length >= 1
+                ? "Nenhum estabelecimento encontrado."
+                : "Digite pelo menos 1 caractere para buscar."}
+            </Text>
+          ) : (
+            <FlatList
+              key="lojas"
+              data={estabelecimentos}
+              keyExtractor={(item) => String(item.id)}
+              renderItem={({ item }) => (
+                <EstabelecimentoCard estabelecimento={item} />
+              )}
+              contentContainerStyle={{ gap: 12, paddingBottom: 16 }}
+              showsVerticalScrollIndicator={false}
+            />
+          )
+        ) : (
+          // === Grid de Produtos ===
+          produtos.length === 0 ? (
+            <Text style={styles.emptyText}>
+              {searchText.length >= 1
+                ? "Nenhum produto encontrado."
+                : "Digite pelo menos 1 caractere para buscar."}
+            </Text>
+          ) : (
+            <FlatList
+              key="produtos"
+              data={produtos}
+              keyExtractor={(item) => String(item.id)}
+              renderItem={({ item }) => <ProdutoCard produto={item} />}
+              numColumns={2}
+              contentContainerStyle={{ paddingBottom: 16 }}
+              showsVerticalScrollIndicator={false}
+            />
+          )
+        )}
       </View>
     </ScreenContainer>
   );

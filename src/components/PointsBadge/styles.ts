@@ -18,9 +18,6 @@ export const styles = StyleSheet.create({
     fontFamily: FontFamily.medium,
     color: colors.white,
   },  
-  // iconContainer: {
-    
-  // },
   textContainer: {
     paddingRight: 16,
   },
