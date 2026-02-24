@@ -1,3 +1,4 @@
+import { ProdutoCard } from "@/src/components/ProdutoCard/Busca";
 import React, { useState } from "react";
 import {
   ActivityIndicator,
@@ -8,13 +9,12 @@ import {
   View,
 } from "react-native";
 import { EstabelecimentoCard } from "../../../components/EstabelecimentoCard";
-import { ProdutoCard } from "../../../components/ProdutoCard/Busca/ProdutoCard";
 import { ScreenContainer } from "../../../components/ScreenContainer/tabs/ScreenContainer";
-import { styles } from "./styles";
 import { colors } from "../../../constants/Colors";
 import Icon from "../../../constants/icons";
 import { useEstabelecimentos } from "../../../hooks/useEstabelecimentos";
 import { useProdutos } from "../../../hooks/useProdutos";
+import { styles } from "./styles";
 
 type SearchMode = "lojas" | "produtos";
 
@@ -24,11 +24,13 @@ export default function Busca() {
 
   const searchQuery = searchText.length >= 1 ? searchText : undefined;
 
-  const { data: estabelecimentos, loading: loadingLojas } =
-    useEstabelecimentos(mode === "lojas" ? searchQuery : undefined);
+  const { data: estabelecimentos, loading: loadingLojas } = useEstabelecimentos(
+    mode === "lojas" ? searchQuery : undefined,
+  );
 
-  const { data: produtos, loading: loadingProdutos } =
-    useProdutos(mode === "produtos" ? searchQuery : undefined);
+  const { data: produtos, loading: loadingProdutos } = useProdutos(
+    mode === "produtos" ? searchQuery : undefined,
+  );
 
   const loading = mode === "lojas" ? loadingLojas : loadingProdutos;
 
@@ -36,19 +38,19 @@ export default function Busca() {
     <ScreenContainer
       headerContent={
         <>
-        {/* Campo de busca */}
-        <View style={styles.searchContainer}>
-          <Icon name="search" size={20} color={colors.white} />
-          <TextInput
-            style={styles.searchInput}
-            placeholder="Procure por Lojas ou Produtos"
-            placeholderTextColor={colors.white}
-            value={searchText}
-            onChangeText={setSearchText}
-            autoCapitalize="none"
-            autoCorrect={false}
-          />
-        </View>
+          {/* Campo de busca */}
+          <View style={styles.searchContainer}>
+            <Icon name="search" size={20} color={colors.white} />
+            <TextInput
+              style={styles.searchInput}
+              placeholder="Procure por Lojas ou Produtos"
+              placeholderTextColor={colors.white}
+              value={searchText}
+              onChangeText={setSearchText}
+              autoCapitalize="none"
+              autoCorrect={false}
+            />
+          </View>
         </>
       }
     >
@@ -116,25 +118,23 @@ export default function Busca() {
               showsVerticalScrollIndicator={false}
             />
           )
+        ) : // === Grid de Produtos ===
+        produtos.length === 0 ? (
+          <Text style={styles.emptyText}>
+            {searchText.length >= 1
+              ? "Nenhum produto encontrado."
+              : "Digite pelo menos 1 caractere para buscar."}
+          </Text>
         ) : (
-          // === Grid de Produtos ===
-          produtos.length === 0 ? (
-            <Text style={styles.emptyText}>
-              {searchText.length >= 1
-                ? "Nenhum produto encontrado."
-                : "Digite pelo menos 1 caractere para buscar."}
-            </Text>
-          ) : (
-            <FlatList
-              key="produtos"
-              data={produtos}
-              keyExtractor={(item) => String(item.id)}
-              renderItem={({ item }) => <ProdutoCard produto={item} />}
-              numColumns={2}
-              contentContainerStyle={{ paddingBottom: 16 }}
-              showsVerticalScrollIndicator={false}
-            />
-          )
+          <FlatList
+            key="produtos"
+            data={produtos}
+            keyExtractor={(item) => String(item.id)}
+            renderItem={({ item }) => <ProdutoCard produto={item} />}
+            numColumns={2}
+            contentContainerStyle={{ paddingBottom: 16 }}
+            showsVerticalScrollIndicator={false}
+          />
         )}
       </View>
     </ScreenContainer>
