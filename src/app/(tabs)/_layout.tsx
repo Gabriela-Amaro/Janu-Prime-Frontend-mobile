@@ -6,7 +6,7 @@ import Icon, { IconName } from "../../constants/icons";
 const ICON_MAPPING: Record<string, IconName> = {
   "home/index": "home",
   "busca/index": "search",
-  transacoes: "transacoes",
+  "transacoes/index": "transacoes",
   perfil: "perfil",
 };
 
@@ -39,7 +39,7 @@ export default function TabLayout() {
 
       <Tabs.Screen name="busca/index" options={{ title: "Busca" }} />
 
-      <Tabs.Screen name="transacoes" options={{ title: "Transações" }} />
+      <Tabs.Screen name="transacoes/index" options={{ title: "Transações" }} />
 
       <Tabs.Screen name="perfil" options={{ title: "Perfil" }} />
     </Tabs>

@@ -4,7 +4,11 @@ export const colors = {
   backgroundPrimary: "#FFFFFF",
   backgroundSecondary: "#F2EDE8",
   success: "#00897B",
+  successDark: "#2E7D32",
   error: "#FF5959",
+  errorDark: "#C62828",
+  border: "#d9d9d9",
+  separator: "#eeeeee",
   brown: {
     100: "#F2EDE8",
     400: "#CAB2A1",

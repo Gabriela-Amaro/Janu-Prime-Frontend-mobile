@@ -62,3 +62,57 @@ export interface RegisterData {
   password: string;
   password2: string;
 }
+
+/** Status possíveis do ticket de crédito */
+export type TicketCreditoStatus = "ABERTO" | "CONCLUIDO" | "CANCELADO" | "RECUSADO";
+
+/** Status possíveis do ticket de débito */
+export type TicketDebitoStatus = "ABERTO" | "APROVADO" | "CONCLUIDO" | "CANCELADO" | "RECUSADO";
+
+/** Ticket de crédito (Acúmulo de Pontos) */
+export interface TicketCredito {
+  id: number;
+  cliente: number;
+  nome_cliente: string;
+  estabelecimento: number;
+  nome_estabelecimento: string;
+  logo_estabelecimento: string | null;
+  media_avaliacoes: number | null;
+  total_avaliacoes: number;
+  codigo: string;
+  status: TicketCreditoStatus;
+  preco: string;
+  pontos: number | null;
+  data_nota: string;
+  numero_nota: string;
+  observacao: string | null;
+  imagem: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+/** Ticket de débito (Resgate de Pontos) */
+export interface TicketDebito {
+  id: number;
+  cliente: number;
+  nome_cliente: string;
+  produto: number;
+  nome_produto: string;
+  imagem_produto: string | null;
+  nome_estabelecimento: string | null;
+  logo_estabelecimento: string | null;
+  media_avaliacoes: number | null;
+  total_avaliacoes: number;
+  codigo: string;
+  status: TicketDebitoStatus;
+  pontos: number;
+  observacao: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+/** Tipo unificado para exibir transações na lista */
+export type Transacao = (
+  | (TicketCredito & { tipo: "credito" })
+  | (TicketDebito & { tipo: "debito" })
+);
