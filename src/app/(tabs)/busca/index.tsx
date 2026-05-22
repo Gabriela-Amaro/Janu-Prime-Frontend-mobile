@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import {
   ActivityIndicator,
-  FlatList,
   Text,
   TextInput,
   TouchableOpacity,
@@ -10,6 +9,7 @@ import {
 import { EstabelecimentoCard } from "../../../components/EstabelecimentoCard";
 import { ProdutoCard } from "../../../components/ProdutoCard/Busca";
 import { ScreenContainer } from "../../../components/ScreenContainer/tabs/ScreenContainer";
+import { RefreshableFlatList } from "../../../components/RefreshableFlatList";
 import { styles } from "./styles";
 import { colors } from "../../../constants/Colors";
 import Icon from "../../../constants/icons";
@@ -24,13 +24,21 @@ export default function Busca() {
 
   const searchQuery = searchText.length >= 1 ? searchText : undefined;
 
-  const { data: estabelecimentos, loading: loadingLojas } =
+  const { data: estabelecimentos, loading: loadingLojas, refetch: refetchLojas } =
     useEstabelecimentos(mode === "lojas" ? searchQuery : undefined);
 
-  const { data: produtos, loading: loadingProdutos } =
+  const { data: produtos, loading: loadingProdutos, refetch: refetchProdutos } =
     useProdutos(mode === "produtos" ? searchQuery : undefined);
 
   const loading = mode === "lojas" ? loadingLojas : loadingProdutos;
+
+  const handleRefresh = useCallback(async () => {
+    if (mode === "lojas") {
+      await refetchLojas();
+    } else {
+      await refetchProdutos();
+    }
+  }, [mode, refetchLojas, refetchProdutos]);
 
   return (
     <ScreenContainer
@@ -105,7 +113,7 @@ export default function Busca() {
                 : "Digite pelo menos 1 caractere para buscar."}
             </Text>
           ) : (
-            <FlatList
+            <RefreshableFlatList
               key="lojas"
               data={estabelecimentos}
               keyExtractor={(item) => String(item.id)}
@@ -114,6 +122,7 @@ export default function Busca() {
               )}
               contentContainerStyle={{ gap: 12, paddingBottom: 16 }}
               showsVerticalScrollIndicator={false}
+              onRefresh={handleRefresh}
             />
           )
         ) : (
@@ -125,7 +134,7 @@ export default function Busca() {
                 : "Digite pelo menos 1 caractere para buscar."}
             </Text>
           ) : (
-            <FlatList
+            <RefreshableFlatList
               key="produtos"
               data={produtos}
               keyExtractor={(item) => String(item.id)}
@@ -133,6 +142,7 @@ export default function Busca() {
               numColumns={2}
               contentContainerStyle={{ paddingBottom: 16 }}
               showsVerticalScrollIndicator={false}
+              onRefresh={handleRefresh}
             />
           )
         )}
