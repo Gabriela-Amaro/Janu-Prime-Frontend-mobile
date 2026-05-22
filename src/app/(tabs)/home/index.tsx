@@ -1,9 +1,7 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback } from "react";
 import {
   ActivityIndicator,
   FlatList,
-  RefreshControl,
-  ScrollView,
   Text,
   View,
 } from "react-native";
@@ -11,6 +9,7 @@ import { CarrosselImagens } from "../../../components/CarrosselImagens";
 import { EstabelecimentoCard } from "../../../components/EstabelecimentoCard";
 import { PointsBadge } from "../../../components/PointsBadge";
 import { ScreenContainer } from "../../../components/ScreenContainer/tabs/ScreenContainer";
+import { RefreshableScrollView } from "../../../components/RefreshableScrollView";
 import { useAuth } from "../../../contexts/AuthContext";
 import { useAnuncios } from "../../../hooks/useAnuncios";
 import { useEstabelecimentos } from "../../../hooks/useEstabelecimentos";
@@ -23,12 +22,8 @@ export default function Home() {
   const { data: estabelecimentos, loading: loadingEstabelecimentos, refetch: refetchEstabelecimentos } =
     useEstabelecimentos();
 
-  const [refreshing, setRefreshing] = useState(false);
-
   const onRefresh = useCallback(async () => {
-    setRefreshing(true);
     await Promise.all([refetchAnuncios(), refetchEstabelecimentos()]);
-    setRefreshing(false);
   }, [refetchAnuncios, refetchEstabelecimentos]);
 
   const firstName = user?.nome?.split(" ")[0] ?? "Usuário";
@@ -42,17 +37,10 @@ export default function Home() {
         </View>
       }
     >
-      <ScrollView
+      <RefreshableScrollView
         style={styles.content}
         showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            colors={[colors.brown[800]]}
-            tintColor={colors.brown[800]}
-          />
-        }
+        onRefresh={onRefresh}
       >
         {/* Seção de Ofertas (só aparece quando há anúncios) */}
         {loadingAnuncios ? (
@@ -87,7 +75,7 @@ export default function Home() {
             contentContainerStyle={{ gap: 12, paddingBottom: 24 }}
           />
         )}
-      </ScrollView>
+      </RefreshableScrollView>
     </ScreenContainer>
   );
 }

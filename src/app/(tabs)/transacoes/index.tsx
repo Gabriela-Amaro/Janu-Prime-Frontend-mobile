@@ -2,16 +2,13 @@ import React, { useMemo } from "react";
 import {
   ActivityIndicator,
   Image,
-  Modal,
-  Pressable,
-  RefreshControl,
-  ScrollView,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
 import { ChevronDown, ChevronRight, Funnel, Star } from "lucide-react-native";
 import { ScreenContainer } from "../../../components/ScreenContainer/tabs/ScreenContainer";
+import { RefreshableScrollView } from "../../../components/RefreshableScrollView";
 import { useAuth } from "../../../contexts/AuthContext";
 import { useTransacoes } from "../../../hooks/useTransacoes";
 import { colors } from "../../../constants/Colors";
@@ -277,7 +274,6 @@ function CardFinalizado({ transacao }: { transacao: Transacao }) {
 export default function Transacoes() {
   const { user } = useAuth();
   const { data, loading, refetch } = useTransacoes();
-  const [refreshing, setRefreshing] = React.useState(false);
   const [sortOption, setSortOption] = React.useState<SortOption>("mais_recentes");
   const [filterOption, setFilterOption] = React.useState<FilterOption>("todos");
   const [showSortMenu, setShowSortMenu] = React.useState(false);
@@ -293,11 +289,7 @@ export default function Transacoes() {
     (t) => t.status === "CONCLUIDO" || t.status === "CANCELADO" || t.status === "RECUSADO"
   );
 
-  async function handleRefresh() {
-    setRefreshing(true);
-    await refetch();
-    setRefreshing(false);
-  }
+
 
   return (
     <ScreenContainer
@@ -308,19 +300,17 @@ export default function Transacoes() {
         </View>
       }
     >
-      {loading && !refreshing ? (
+      {loading ? (
         <ActivityIndicator
           size="large"
           color={colors.brown[800]}
           style={{ marginTop: 40 }}
         />
       ) : (
-        <ScrollView
+        <RefreshableScrollView
           style={styles.content}
           showsVerticalScrollIndicator={false}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
-          }
+          onRefresh={refetch}
         >
           {/* Barra de Ordenar + Filtro */}
           <View style={styles.toolbarRow}>
@@ -411,7 +401,7 @@ export default function Transacoes() {
           )}
 
           <View style={{ height: 24 }} />
-        </ScrollView>
+        </RefreshableScrollView>
       )}
     </ScreenContainer>
   );
