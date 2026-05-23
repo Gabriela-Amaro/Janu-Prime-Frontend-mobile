@@ -1,5 +1,6 @@
 import React from "react";
 import { Image, TouchableOpacity, Text, View } from "react-native";
+import { useRouter } from "expo-router";
 import { Star } from "lucide-react-native";
 import { styles } from "./styles";
 import { BASE_URL } from "../../services/api";
@@ -20,6 +21,7 @@ export function EstabelecimentoCard({
   estabelecimento,
   showEndereco = false,
 }: EstabelecimentoCardProps) {
+  const router = useRouter();
   const { nome, logotipo, descricao, endereco, media_avaliacoes } = estabelecimento;
 
   const logoUrl = logotipo
@@ -29,7 +31,10 @@ export function EstabelecimentoCard({
     : null;
 
   return (
-    <TouchableOpacity onPress={() => {}} style={styles.card}>
+    <TouchableOpacity
+      onPress={() => router.push(`/estabelecimento/${estabelecimento.id}`)}
+      style={styles.card}
+    >
       {/* Avaliação fixa no canto superior direito */}
       <View style={styles.rating}>
         {media_avaliacoes != null ? (

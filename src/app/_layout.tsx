@@ -39,6 +39,9 @@ function RootNavigator() {
 
       {/* Grupo das tabs (rota principal após login) */}
       <Stack.Screen name="(tabs)" />
+
+      {/* Tela de detalhe do estabelecimento */}
+      <Stack.Screen name="estabelecimento/[id]" />
     </Stack>
   );
 }
