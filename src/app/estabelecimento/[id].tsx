@@ -75,7 +75,7 @@ function ProductCard({ produto }: { produto: Produto }) {
     : null;
 
   return (
-    <View style={styles.productCard}>
+    <TouchableOpacity style={styles.productCard}>
       <View style={styles.productInfo}>
         <Text style={styles.productName}>{produto.nome}</Text>
         {produto.descricao ? (
@@ -92,7 +92,7 @@ function ProductCard({ produto }: { produto: Produto }) {
           <Text style={{ color: colors.gray[500], fontSize: 12 }}>Sem foto</Text>
         </View>
       )}
-    </View>
+    </TouchableOpacity>
   );
 }
 
@@ -196,74 +196,77 @@ export default function EstabelecimentoScreen() {
           </TouchableOpacity>
         </View>
 
-        {/* Logo circular */}
-        <View style={styles.logoWrapper}>
-          {logoUrl ? (
-            <Image source={{ uri: logoUrl }} style={styles.logo} />
-          ) : (
-            <View style={[styles.logo, styles.logoPlaceholder]}>
-              <Text style={styles.logoText}>
-                {estabelecimento.nome.charAt(0).toUpperCase()}
-              </Text>
-            </View>
-          )}
-        </View>
-
-        {/* Informações */}
-        <View style={styles.infoSection}>
-          {/* Nome */}
-          <TouchableOpacity style={styles.nameRow}>
-            <Text style={styles.name}>{estabelecimento.nome}</Text>
-            <ChevronRight size={20} color={colors.gray[700]} />
-          </TouchableOpacity>
-
-          {/* Avaliação */}
-          <TouchableOpacity style={styles.ratingRow}>
-            {estabelecimento.media_avaliacoes != null ? (
-              <>
-                <Text style={styles.ratingText}>
-                  {estabelecimento.media_avaliacoes.toFixed(1)}
-                </Text>
-                <Star size={14} color={colors.textPrimary} fill={colors.textPrimary} />
-                <Text style={styles.ratingCount}>
-                  ({estabelecimento.total_avaliacoes} Avaliações)
-                </Text>
-              </>
+        {/* Conteúdo principal */}
+        <View style={styles.contentContainer}>
+          {/* Logo circular */}
+          <View style={styles.logoWrapper}>
+            {logoUrl ? (
+              <Image source={{ uri: logoUrl }} style={styles.logo} />
             ) : (
-              <Text style={styles.ratingCount}>Sem avaliações</Text>
+              <View style={[styles.logo, styles.logoPlaceholder]}>
+                <Text style={styles.logoText}>
+                  {estabelecimento.nome.charAt(0).toUpperCase()}
+                </Text>
+              </View>
             )}
-            <View style={{ flex: 1 }} />
-            <ChevronRight size={18} color={colors.gray[700]} />
-          </TouchableOpacity>
+          </View>
 
-          {/* Horário */}
-          <TouchableOpacity style={styles.hoursRow}>
-            <Text style={styles.hoursLabel}>Horário de funcionamento: Hoje</Text>
-            <View style={{ flex: 1 }} />
-            <Text
-              style={[
-                styles.hoursStatus,
-                horarioStatus.isOpen ? styles.hoursOpen : styles.hoursClosed,
-              ]}
-            >
-              {horarioStatus.label}
-            </Text>
-            <ChevronRight size={18} color={colors.gray[700]} />
-          </TouchableOpacity>
+          {/* Informações */}
+          <View style={styles.infoSection}>
+            {/* Nome */}
+            <TouchableOpacity style={styles.nameRow}>
+              <Text style={styles.name}>{estabelecimento.nome}</Text>
+              <ChevronRight size={20} color={colors.brown[800]} />
+            </TouchableOpacity>
+
+            {/* Avaliação */}
+            <TouchableOpacity style={styles.ratingRow}>
+              {estabelecimento.media_avaliacoes != null ? (
+                <>
+                  <Text style={styles.ratingText}>
+                    {estabelecimento.media_avaliacoes.toFixed(1)}
+                  </Text>
+                  <Star size={14} color={colors.textPrimary} fill={colors.textPrimary} />
+                  <Text style={styles.ratingCount}>
+                    ({estabelecimento.total_avaliacoes} Avaliações)
+                  </Text>
+                </>
+              ) : (
+                <Text style={styles.ratingCount}>Sem avaliações</Text>
+              )}
+              <View style={{ flex: 1 }} />
+              <ChevronRight size={18} color={colors.brown[800]} />
+            </TouchableOpacity>
+
+            {/* Horário */}
+            <TouchableOpacity style={styles.hoursRow}>
+              <Text style={styles.hoursLabel}>Horário de funcionamento: Hoje</Text>
+              <View style={{ flex: 1 }} />
+              <Text
+                style={[
+                  styles.hoursStatus,
+                  horarioStatus.isOpen ? styles.hoursOpen : styles.hoursClosed,
+                ]}
+              >
+                {horarioStatus.label}
+              </Text>
+              <ChevronRight size={18} color={colors.brown[800]} />
+            </TouchableOpacity>
+          </View>
+
+          {/* Produtos */}
+          <View style={styles.productsHeader}>
+            <Text style={styles.productsTitle}>Produtos</Text>
+          </View>
+
+          {produtos.length === 0 ? (
+            <Text style={styles.emptyText}>Nenhum produto disponível.</Text>
+          ) : (
+            produtos.map((p) => <ProductCard key={p.id} produto={p} />)
+          )}
+
+          <View style={{ height: 80 }} />
         </View>
-
-        {/* Produtos */}
-        <View style={styles.productsHeader}>
-          <Text style={styles.productsTitle}>Produtos</Text>
-        </View>
-
-        {produtos.length === 0 ? (
-          <Text style={styles.emptyText}>Nenhum produto disponível.</Text>
-        ) : (
-          produtos.map((p) => <ProductCard key={p.id} produto={p} />)
-        )}
-
-        <View style={{ height: 80 }} />
       </ScrollView>
 
       {/* Botão Pontuar */}

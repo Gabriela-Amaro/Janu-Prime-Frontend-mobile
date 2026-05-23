@@ -12,6 +12,14 @@ export const styles = StyleSheet.create({
     // height: 200,
     backgroundColor: colors.brown[100],
   },
+  contentContainer: {
+    backgroundColor: colors.backgroundPrimary,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    marginTop: -28,
+    paddingTop: 0,
+    flex: 1,
+  },
   bannerImage: {
     width: "100%",
     height: "100%",
@@ -96,8 +104,6 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 10,
     paddingHorizontal: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.separator,
   },
   hoursLabel: {
     fontSize: FontSize.description,
@@ -107,6 +113,7 @@ export const styles = StyleSheet.create({
   hoursStatus: {
     fontSize: FontSize.description,
     fontFamily: FontFamily.medium,
+    paddingRight: 8,
   },
   hoursOpen: {
     color: colors.successDark,
@@ -175,7 +182,7 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 6,
-    backgroundColor: colors.brown[800],
+    backgroundColor: colors.orange,
     paddingHorizontal: 20,
     paddingVertical: 12,
     borderRadius: 24,

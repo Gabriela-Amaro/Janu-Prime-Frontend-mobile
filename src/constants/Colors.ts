@@ -9,6 +9,8 @@ export const colors = {
   errorDark: "#C62828",
   border: "#d9d9d9",
   separator: "#F2EDE8",
+  white: "#FFFFFF",
+  orange: "#ED7829",
   brown: {
     100: "#F2EDE8",
     400: "#CAB2A1",
@@ -22,5 +24,5 @@ export const colors = {
     800: "#1C120D",
     900: "#000000",
   },
-  white: "#FFFFFF",
+  
 };
