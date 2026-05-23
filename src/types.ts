@@ -13,6 +13,7 @@ export interface Estabelecimento {
   cnpj: string;
   horario_funcionamento: Record<string, string>;
   media_avaliacoes: number | null;
+  total_avaliacoes: number;
 }
 
 /** Anúncio/oferta de um estabelecimento */
