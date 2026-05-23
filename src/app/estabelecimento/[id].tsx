@@ -1,5 +1,5 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { ChevronLeft, ChevronRight, ClipboardList, Star } from "lucide-react-native";
+import { ChevronRight, ClipboardList, Star } from "lucide-react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import Carousel from "react-native-reanimated-carousel";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { BackButton } from "../../components/Buttons/Back";
 import { colors } from "../../constants/Colors";
 import { api, BASE_URL } from "../../services/api";
 import type { Estabelecimento, Produto } from "../../types";
@@ -68,6 +69,7 @@ function getHorarioStatus(horario: Record<string, string>): {
 }
 
 function ProductCard({ produto }: { produto: Produto }) {
+  const router = useRouter();
   const imageUrl = produto.imagem
     ? produto.imagem.startsWith("http")
       ? produto.imagem
@@ -75,7 +77,10 @@ function ProductCard({ produto }: { produto: Produto }) {
     : null;
 
   return (
-    <TouchableOpacity style={styles.productCard}>
+    <TouchableOpacity
+      style={styles.productCard}
+      onPress={() => router.push(`/produto/${produto.id}`)}
+    >
       <View style={styles.productInfo}>
         <Text style={styles.productName}>{produto.nome}</Text>
         {produto.descricao ? (
@@ -188,12 +193,7 @@ export default function EstabelecimentoScreen() {
               )}
             />
           ) : null}
-          <TouchableOpacity
-            style={[styles.backButton, { top: 12 }]}
-            onPress={() => router.back()}
-          >
-            <ChevronLeft size={20} color={colors.white} />
-          </TouchableOpacity>
+          <BackButton />
         </View>
 
         {/* Conteúdo principal */}

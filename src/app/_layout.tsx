@@ -42,6 +42,9 @@ function RootNavigator() {
 
       {/* Tela de detalhe do estabelecimento */}
       <Stack.Screen name="estabelecimento/[id]" />
+
+      {/* Tela de detalhe do produto */}
+      <Stack.Screen name="produto/[id]" />
     </Stack>
   );
 }
