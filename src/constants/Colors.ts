@@ -8,7 +8,7 @@ export const colors = {
   error: "#FF5959",
   errorDark: "#C62828",
   border: "#d9d9d9",
-  separator: "#eeeeee",
+  separator: "#F2EDE8",
   brown: {
     100: "#F2EDE8",
     400: "#CAB2A1",
