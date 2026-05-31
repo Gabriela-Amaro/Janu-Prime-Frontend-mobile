@@ -1,5 +1,6 @@
 import React from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
+import { useRouter } from "expo-router";
 import { Star } from "lucide-react-native";
 import { styles } from "./styles";
 import { colors } from "../../../constants/Colors";
@@ -14,10 +15,15 @@ interface ProdutoCardProps {
  * Mostra imagem, pontos (JP), nome, e info do estabelecimento com logo e avaliação.
  */
 export function ProdutoCard({ produto }: ProdutoCardProps) {
+  const router = useRouter();
   const { nome, imagem, pontos, estabelecimento_nome, estabelecimento_logo } = produto;
 
   return (
-    <TouchableOpacity style={styles.card} activeOpacity={0.8}>
+    <TouchableOpacity
+      style={styles.card}
+      activeOpacity={0.8}
+      onPress={() => router.push(`/produto/${produto.id}`)}
+    >
       {/* Imagem do produto */}
       {imagem ? (
         <Image source={{ uri: imagem }} style={styles.image} />
