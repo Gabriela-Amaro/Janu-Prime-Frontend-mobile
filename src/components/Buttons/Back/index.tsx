@@ -7,9 +7,10 @@ import { colors } from "../../../constants/Colors";
 interface BackButtonProps {
   style?: ViewStyle | ViewStyle[];
   onPress?: () => void;
+  color?: string;
 }
 
-export function BackButton({ style, onPress }: BackButtonProps) {
+export function BackButton({ style, onPress, color }: BackButtonProps) {
   const router = useRouter();
 
   const handlePress = () => {
@@ -26,7 +27,7 @@ export function BackButton({ style, onPress }: BackButtonProps) {
       onPress={handlePress}
       activeOpacity={0.7}
     >
-      <ChevronLeft size={20} color={colors.white} />
+      <ChevronLeft size={20} color={color || colors.white} />
     </TouchableOpacity>
   );
 }

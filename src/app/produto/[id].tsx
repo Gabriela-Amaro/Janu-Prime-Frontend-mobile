@@ -129,7 +129,10 @@ export default function ProdutoDetalheScreen() {
           <Text style={styles.footerTotalLabel}>Total do Pedido</Text>
           <Text style={styles.footerTotalValue}>JP {produto.pontos}</Text>
         </View>
-        <TouchableOpacity style={styles.footerButton}>
+        <TouchableOpacity
+          style={styles.footerButton}
+          onPress={() => router.push(`/produto/confirmar/${produto.id}`)}
+        >
           <Text style={styles.footerButtonText}>Continuar</Text>
         </TouchableOpacity>
       </View>
