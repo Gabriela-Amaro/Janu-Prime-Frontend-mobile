@@ -48,6 +48,9 @@ function RootNavigator() {
 
       {/* Tela de confirmação do pedido */}
       <Stack.Screen name="produto/confirmar/[id]" />
+
+      {/* Tela de acompanhamento do resgate */}
+      <Stack.Screen name="ticket/resgate/[id]" />
     </Stack>
   );
 }

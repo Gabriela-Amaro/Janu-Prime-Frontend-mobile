@@ -1,4 +1,5 @@
 import React, { useMemo } from "react";
+import { useRouter } from "expo-router";
 import {
   ActivityIndicator,
   Image,
@@ -187,7 +188,7 @@ function StoreInfo({ transacao, andamento = false }: { transacao: Transacao; and
   );
 }
 
-function CardEmAndamento({ transacao }: { transacao: Transacao }) {
+function CardEmAndamento({ transacao, onAcompanhar }: { transacao: Transacao; onAcompanhar?: () => void }) {
   const isCredito = transacao.tipo === "credito";
 
   return (
@@ -212,7 +213,7 @@ function CardEmAndamento({ transacao }: { transacao: Transacao }) {
           <StoreInfo transacao={transacao} andamento={true}/>
           <Text style={styles.notaText}>N° da Nota: {transacao.codigo}</Text>
         </View>
-        <TouchableOpacity style={styles.acompanharRow}>
+        <TouchableOpacity style={styles.acompanharRow} onPress={onAcompanhar}>
           <Text style={styles.acompanharText}>Acompanhar</Text>
           <ChevronRight size={16} color={colors.brown[800]} />
         </TouchableOpacity>
@@ -274,6 +275,7 @@ function CardFinalizado({ transacao }: { transacao: Transacao }) {
 export default function Transacoes() {
   const { user } = useAuth();
   const { data, loading, refetch } = useTransacoes();
+  const router = useRouter();
   const [sortOption, setSortOption] = React.useState<SortOption>("mais_recentes");
   const [filterOption, setFilterOption] = React.useState<FilterOption>("todos");
   const [showSortMenu, setShowSortMenu] = React.useState(false);
@@ -379,7 +381,15 @@ export default function Transacoes() {
             <>
               <Text style={styles.sectionTitle}>Em Andamento</Text>
               {emAndamento.map((t) => (
-                <CardEmAndamento key={`${t.tipo}-${t.id}`} transacao={t} />
+                <CardEmAndamento
+                  key={`${t.tipo}-${t.id}`}
+                  transacao={t}
+                  onAcompanhar={
+                    t.tipo === "debito"
+                      ? () => router.push(`/ticket/resgate/${t.id}`)
+                      : undefined
+                  }
+                />
               ))}
             </>
           )}

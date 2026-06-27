@@ -99,6 +99,7 @@ export interface TicketDebito {
   nome_cliente: string;
   produto: number;
   nome_produto: string;
+  descricao_produto: string;
   imagem_produto: string | null;
   nome_estabelecimento: string | null;
   logo_estabelecimento: string | null;
