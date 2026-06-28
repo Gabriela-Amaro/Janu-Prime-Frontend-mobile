@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useState, useCallback } from "react";
 import * as authService from "../services/auth";
 import { getAccessToken, clearTokens } from "../services/storage";
 import type { UserData, RegisterData } from "../types";
@@ -75,14 +75,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(null);
   }
 
-  async function refreshUser() {
+  const refreshUser = useCallback(async () => {
     try {
       const userData = await authService.getMe();
       setUser(userData);
     } catch (err) {
       console.error("Erro ao atualizar dados do usuário:", err);
     }
-  }
+  }, []);
 
   return (
     <AuthContext.Provider

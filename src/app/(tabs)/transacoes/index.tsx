@@ -1,5 +1,6 @@
 import React, { useMemo } from "react";
 import { useRouter } from "expo-router";
+import { useFocusEffect } from "@react-navigation/native";
 import {
   ActivityIndicator,
   Image,
@@ -281,6 +282,13 @@ export default function Transacoes() {
   const [filterOption, setFilterOption] = React.useState<FilterOption>("todos");
   const [showSortMenu, setShowSortMenu] = React.useState(false);
   const [showFilterMenu, setShowFilterMenu] = React.useState(false);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      refetch();
+      refreshUser();
+    }, [])
+  );
 
   const handleRefresh = React.useCallback(async () => {
     setShowSortMenu(false);
