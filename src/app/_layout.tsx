@@ -54,6 +54,9 @@ function RootNavigator() {
 
       {/* Tela de acompanhamento do acúmulo */}
       <Stack.Screen name="ticket/acumulo/[id]" />
+
+      {/* Tela de envio de nota fiscal (acúmulo) */}
+      <Stack.Screen name="ticket/acumulo/criar" />
     </Stack>
   );
 }

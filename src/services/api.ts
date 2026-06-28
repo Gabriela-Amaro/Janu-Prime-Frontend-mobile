@@ -53,7 +53,7 @@ async function request<T>(
 
   // Monta os headers com o token (se existir)
   const headers: Record<string, string> = {
-    "Content-Type": "application/json",
+    ...(!(options.body instanceof FormData) ? { "Content-Type": "application/json" } : {}),
     ...(options.headers as Record<string, string>),
   };
 
@@ -154,19 +154,19 @@ export const api = {
   post: <T>(endpoint: string, body?: unknown) =>
     request<T>(endpoint, {
       method: "POST",
-      body: body ? JSON.stringify(body) : undefined,
+      body: body instanceof FormData ? body : body ? JSON.stringify(body) : undefined,
     }),
 
   put: <T>(endpoint: string, body?: unknown) =>
     request<T>(endpoint, {
       method: "PUT",
-      body: body ? JSON.stringify(body) : undefined,
+      body: body instanceof FormData ? body : body ? JSON.stringify(body) : undefined,
     }),
 
   patch: <T>(endpoint: string, body?: unknown) =>
     request<T>(endpoint, {
       method: "PATCH",
-      body: body ? JSON.stringify(body) : undefined,
+      body: body instanceof FormData ? body : body ? JSON.stringify(body) : undefined,
     }),
 
   del: <T>(endpoint: string) => request<T>(endpoint, { method: "DELETE" }),

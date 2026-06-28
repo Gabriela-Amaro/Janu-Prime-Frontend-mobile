@@ -3,13 +3,16 @@ import { ChevronRight, ClipboardList, Star } from "lucide-react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
+  Alert,
   Dimensions,
   Image,
+  Modal,
   ScrollView,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
+import * as ImagePicker from "expo-image-picker";
 import Carousel from "react-native-reanimated-carousel";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { BackButton } from "../../components/Buttons/Back";
@@ -110,6 +113,35 @@ export default function EstabelecimentoScreen() {
   const [produtos, setProdutos] = useState<Produto[]>([]);
   const [fotosUrls, setFotosUrls] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
+  const [capturedImage, setCapturedImage] = useState<string | null>(null);
+  const [showPreview, setShowPreview] = useState(false);
+
+  const handlePontuar = async () => {
+    try {
+      const { status } = await ImagePicker.requestCameraPermissionsAsync();
+      if (status !== "granted") {
+        Alert.alert(
+          "Permissão necessária",
+          "Precisamos de permissão para acessar sua câmera para tirar foto da nota fiscal."
+        );
+        return;
+      }
+
+      const result = await ImagePicker.launchCameraAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        quality: 0.8,
+        allowsEditing: false,
+      });
+
+      if (!result.canceled && result.assets && result.assets.length > 0) {
+        setCapturedImage(result.assets[0].uri);
+        setShowPreview(true);
+      }
+    } catch (err) {
+      console.error("Erro ao abrir a câmera:", err);
+      Alert.alert("Erro", "Não foi possível abrir a câmera.");
+    }
+  };
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -270,10 +302,62 @@ export default function EstabelecimentoScreen() {
       </ScrollView>
 
       {/* Botão Pontuar */}
-      <TouchableOpacity style={styles.pontuarBtn}>
+      <TouchableOpacity style={styles.pontuarBtn} onPress={handlePontuar}>
         <ClipboardList size={18} color={colors.white} />
         <Text style={styles.pontuarText}>Pontuar</Text>
       </TouchableOpacity>
+
+      {/* Modal de Revisão da Foto */}
+      <Modal
+        visible={showPreview}
+        animationType="slide"
+        onRequestClose={() => setShowPreview(false)}
+      >
+        <View style={[styles.previewModalContainer, { paddingTop: insets.top }]}>
+          {/* Header */}
+          <View style={styles.previewHeader}>
+            <Text style={styles.previewHeaderTitle}>Revisar Foto</Text>
+          </View>
+
+          {/* Imagem */}
+          <View style={styles.previewImageContainer}>
+            {capturedImage && (
+              <Image
+                source={{ uri: capturedImage }}
+                style={styles.previewImage}
+                resizeMode="contain"
+              />
+            )}
+          </View>
+
+          {/* Footer */}
+          <View style={[styles.previewFooter, { paddingBottom: Math.max(insets.bottom, 20) }]}>
+            <TouchableOpacity
+              style={styles.btnRetake}
+              onPress={handlePontuar}
+            >
+              <Text style={styles.btnRetakeText}>Tirar novamente</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.btnAccept}
+              onPress={() => {
+                setShowPreview(false);
+                router.push({
+                  pathname: "/ticket/acumulo/criar",
+                  params: {
+                    imageUri: capturedImage || "",
+                    establishmentId: id,
+                    establishmentName: estabelecimento.nome,
+                  },
+                });
+              }}
+            >
+              <Text style={styles.btnAcceptText}>Continuar</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
