@@ -20,6 +20,8 @@ interface AuthContextData {
   signUp: (data: RegisterData) => Promise<void>;
   /** Faz logout */
   signOut: () => Promise<void>;
+  /** Atualiza os dados do usuário autenticado */
+  refreshUser: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextData>({} as AuthContextData);
@@ -73,6 +75,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(null);
   }
 
+  async function refreshUser() {
+    try {
+      const userData = await authService.getMe();
+      setUser(userData);
+    } catch (err) {
+      console.error("Erro ao atualizar dados do usuário:", err);
+    }
+  }
+
   return (
     <AuthContext.Provider
       value={{
@@ -82,6 +93,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         signIn,
         signUp,
         signOut,
+        refreshUser,
       }}
     >
       {children}

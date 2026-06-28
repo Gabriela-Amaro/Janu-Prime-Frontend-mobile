@@ -273,13 +273,17 @@ function CardFinalizado({ transacao, onVerDetalhes }: { transacao: Transacao; on
 // ─── Tela principal ──────────────────────────────────
 
 export default function Transacoes() {
-  const { user } = useAuth();
+  const { user, refreshUser } = useAuth();
   const { data, loading, refetch } = useTransacoes();
   const router = useRouter();
   const [sortOption, setSortOption] = React.useState<SortOption>("mais_recentes");
   const [filterOption, setFilterOption] = React.useState<FilterOption>("todos");
   const [showSortMenu, setShowSortMenu] = React.useState(false);
   const [showFilterMenu, setShowFilterMenu] = React.useState(false);
+
+  const handleRefresh = React.useCallback(async () => {
+    await Promise.all([refetch(), refreshUser()]);
+  }, [refetch, refreshUser]);
 
   // Aplica filtro e ordenação
   const filtered = useMemo(() => applySort(applyFilter(data, filterOption), sortOption), [data, filterOption, sortOption]);
@@ -312,7 +316,7 @@ export default function Transacoes() {
         <RefreshableScrollView
           style={styles.content}
           showsVerticalScrollIndicator={false}
-          onRefresh={refetch}
+          onRefresh={handleRefresh}
         >
           {/* Barra de Ordenar + Filtro */}
           <View style={styles.toolbarRow}>
