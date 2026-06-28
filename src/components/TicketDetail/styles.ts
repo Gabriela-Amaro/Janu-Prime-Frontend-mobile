@@ -294,4 +294,48 @@ export const styles = StyleSheet.create({
     fontSize: FontSize.body,
     fontFamily: FontFamily.bold,
   },
+
+  // ─── Atualizações (Timeline) ───────────────────────
+  updatesSection: {
+    padding: 20,
+  },
+  updateRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 12,
+  },
+  updateLabel: {
+    fontSize: FontSize.body,
+    fontFamily: FontFamily.regular,
+    color: colors.gray[700],
+  },
+  updateLabelBold: {
+    fontFamily: FontFamily.bold,
+    color: colors.textPrimary,
+  },
+  updateDate: {
+    fontSize: FontSize.description,
+    fontFamily: FontFamily.regular,
+    color: colors.gray[500],
+  },
+
+  // ─── Observação (Card) ─────────────────────────────
+  observationSection: {
+    paddingHorizontal: 20,
+    paddingBottom: 20,
+  },
+  observationCard: {
+    borderWidth: 1,
+    borderColor: colors.separator,
+    borderRadius: 12,
+    padding: 16,
+    minHeight: 80,
+  },
+  observationText: {
+    fontSize: FontSize.description,
+    fontFamily: FontFamily.regular,
+    color: colors.gray[700],
+    lineHeight: 20,
+  },
 });

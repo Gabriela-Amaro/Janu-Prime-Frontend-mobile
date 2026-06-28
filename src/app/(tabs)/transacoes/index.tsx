@@ -222,7 +222,7 @@ function CardEmAndamento({ transacao, onAcompanhar }: { transacao: Transacao; on
   );
 }
 
-function CardFinalizado({ transacao }: { transacao: Transacao }) {
+function CardFinalizado({ transacao, onVerDetalhes }: { transacao: Transacao; onVerDetalhes?: () => void }) {
   const isCredito = transacao.tipo === "credito";
   const borderColor = getStatusBorderColor(transacao.status);
 
@@ -261,7 +261,7 @@ function CardFinalizado({ transacao }: { transacao: Transacao }) {
           </View>
         </View>
 
-        <TouchableOpacity style={styles.detalhesRow}>
+        <TouchableOpacity style={styles.detalhesRow} onPress={onVerDetalhes}>
           <Text style={styles.detalhesText}>Ver Detalhes</Text>
           <ChevronRight size={16} color={colors.brown[800]} />
         </TouchableOpacity>
@@ -399,7 +399,15 @@ export default function Transacoes() {
             <>
               <Text style={styles.sectionTitle}>Finalizado</Text>
               {finalizados.map((t) => (
-                <CardFinalizado key={`${t.tipo}-${t.id}`} transacao={t} />
+                <CardFinalizado
+                  key={`${t.tipo}-${t.id}`}
+                  transacao={t}
+                  onVerDetalhes={
+                    t.tipo === "debito"
+                      ? () => router.push(`/ticket/resgate/${t.id}`)
+                      : () => router.push(`/ticket/acumulo/${t.id}`)
+                  }
+                />
               ))}
             </>
           )}

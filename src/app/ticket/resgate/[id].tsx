@@ -19,6 +19,8 @@ import { TicketDetailCard } from "../../../components/TicketDetail/TicketDetailC
 import { TicketValues } from "../../../components/TicketDetail/TicketValues";
 import { TicketCancelButton } from "../../../components/TicketDetail/TicketCancelButton";
 import { TicketStatusBar } from "../../../components/TicketDetail/TicketStatusBar";
+import { TicketUpdates } from "../../../components/TicketDetail/TicketUpdates";
+import { TicketObservation } from "../../../components/TicketDetail/TicketObservation";
 import { styles } from "../../../components/TicketDetail/styles";
 
 // ─── Helpers ─────────────────────────────────────────
@@ -30,13 +32,27 @@ function getStatusConfig(status: string) {
     case "APROVADO":
       return { label: "Em Preparo", color: colors.orange };
     case "CONCLUIDO":
-      return { label: "Concluído", color: colors.success };
+      return { label: "Aprovado", color: colors.success };
     case "CANCELADO":
       return { label: "Cancelado", color: colors.gray[500] };
     case "RECUSADO":
       return { label: "Recusado", color: colors.error };
     default:
       return { label: status, color: colors.gray[500] };
+  }
+}
+
+function getStatusDateLabel(status: string): string {
+  switch (status) {
+    case "APROVADO":
+    case "CONCLUIDO":
+      return "Data de Aprovação";
+    case "CANCELADO":
+      return "Data de Cancelamento";
+    case "RECUSADO":
+      return "Data de Recusa";
+    default:
+      return "Data de Atualização";
   }
 }
 
@@ -141,6 +157,19 @@ export default function AcompanharResgateScreen() {
   const storeName = ticket.nome_estabelecimento ?? "Loja";
   const statusConfig = getStatusConfig(ticket.status);
   const canCancel = ticket.status === "ABERTO";
+  const isFinalizado = ["CONCLUIDO", "CANCELADO", "RECUSADO"].includes(ticket.status);
+
+  // ─── Atualizações rows ──────────────────────────
+  const updateRows = [
+    { label: "Data de Abertura", date: ticket.created_at },
+  ];
+  if (ticket.status !== "ABERTO") {
+    updateRows.push({
+      label: getStatusDateLabel(ticket.status),
+      date: ticket.updated_at,
+      bold: true,
+    } as any);
+  }
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
@@ -170,6 +199,11 @@ export default function AcompanharResgateScreen() {
           totalLabel="Total"
           totalAmount={`JP ${ticket.pontos}`}
         />
+
+        {isFinalizado && <TicketUpdates rows={updateRows} />}
+
+        {isFinalizado && <TicketObservation text={ticket.observacao} />}
+
         <View style={{ height: 80 }} />
       </ScrollView>
 

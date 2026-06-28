@@ -19,6 +19,8 @@ import { TicketDetailCard } from "../../../components/TicketDetail/TicketDetailC
 import { TicketValues } from "../../../components/TicketDetail/TicketValues";
 import { TicketCancelButton } from "../../../components/TicketDetail/TicketCancelButton";
 import { TicketStatusBar } from "../../../components/TicketDetail/TicketStatusBar";
+import { TicketUpdates } from "../../../components/TicketDetail/TicketUpdates";
+import { TicketObservation } from "../../../components/TicketDetail/TicketObservation";
 import { styles } from "../../../components/TicketDetail/styles";
 
 // ─── Helpers ─────────────────────────────────────────
@@ -41,13 +43,26 @@ function getStatusConfig(status: string) {
     case "ABERTO":
       return { label: "Em Andamento", color: colors.brown[800] };
     case "CONCLUIDO":
-      return { label: "Concluído", color: colors.success };
+      return { label: "Aprovado", color: colors.success };
     case "CANCELADO":
       return { label: "Cancelado", color: colors.gray[500] };
     case "RECUSADO":
       return { label: "Recusado", color: colors.error };
     default:
       return { label: status, color: colors.gray[500] };
+  }
+}
+
+function getStatusDateLabel(status: string): string {
+  switch (status) {
+    case "CONCLUIDO":
+      return "Data de Aprovação";
+    case "CANCELADO":
+      return "Data de Cancelamento";
+    case "RECUSADO":
+      return "Data de Recusa";
+    default:
+      return "Data de Atualização";
   }
 }
 
@@ -152,6 +167,19 @@ export default function AcompanharAcumuloScreen() {
   const storeName = ticket.nome_estabelecimento ?? "Loja";
   const statusConfig = getStatusConfig(ticket.status);
   const canCancel = ticket.status === "ABERTO";
+  const isFinalizado = ["CONCLUIDO", "CANCELADO", "RECUSADO"].includes(ticket.status);
+
+  // ─── Atualizações rows ──────────────────────────
+  const updateRows = [
+    { label: "Data de Abertura", date: ticket.created_at },
+  ];
+  if (ticket.status !== "ABERTO") {
+    updateRows.push({
+      label: getStatusDateLabel(ticket.status),
+      date: ticket.updated_at,
+      bold: true,
+    } as any);
+  }
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
@@ -176,18 +204,16 @@ export default function AcompanharAcumuloScreen() {
           extraText={`Data de Emissão: ${formatShortDate(ticket.data_nota)}`}
         />
 
-        {ticket.observacao && ticket.status === "RECUSADO" && (
-          <View style={styles.observacaoSection}>
-            <Text style={styles.observacaoLabel}>Motivo da Recusa:</Text>
-            <Text style={styles.observacaoText}>{ticket.observacao}</Text>
-          </View>
-        )}
-
         <TicketValues
           rows={[{ label: "Valor da Nota", amount: formatCurrency(ticket.preco) }]}
           totalLabel="Total de Pontos"
           totalAmount={`JP ${ticket.pontos ?? 0}`}
         />
+
+        {isFinalizado && <TicketUpdates rows={updateRows} />}
+
+        {isFinalizado && <TicketObservation text={ticket.observacao} />}
+
         <View style={{ height: 80 }} />
       </ScrollView>
 
