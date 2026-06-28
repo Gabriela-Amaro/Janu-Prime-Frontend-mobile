@@ -48,13 +48,14 @@ export default function ConfirmarPedidoScreen() {
     if (!produto) return;
     setSubmitting(true);
     try {
-      await api.post("/api/tickets/debito/", { produto: produto.id });
+      const response = await api.post<{ id: number }>("/api/tickets/debito/", { produto: produto.id });
       Alert.alert("Sucesso", "Pedido realizado com sucesso!", [
         {
           text: "OK",
           onPress: () => {
-            // Redireciona para a tela de transações
+            // Redireciona para a tela de transações e abre a tela de acompanhamento
             router.replace("/(tabs)/transacoes");
+            router.push(`/ticket/resgate/${response.id}`);
           },
         },
       ]);
