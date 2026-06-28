@@ -1,6 +1,8 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, Dimensions } from "react-native";
 import { colors } from "../../../constants/Colors";
 import { FontFamily, FontSize } from "../../../constants/Fonts";
+
+const { height: screenHeight, width: screenWidth } = Dimensions.get("window");
 
 export const styles = StyleSheet.create({
   headerContent: {
@@ -256,5 +258,14 @@ export const styles = StyleSheet.create({
   dropdownItemActive: {
     color: colors.brown[800],
     fontFamily: FontFamily.bold,
+  },
+  backdrop: {
+    position: "absolute",
+    top: -screenHeight,
+    bottom: -screenHeight,
+    left: -screenWidth,
+    right: -screenWidth,
+    backgroundColor: "transparent",
+    zIndex: 15,
   },
 });

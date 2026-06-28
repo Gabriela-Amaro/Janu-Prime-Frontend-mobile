@@ -5,6 +5,7 @@ import {
   Image,
   Text,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   View,
 } from "react-native";
 import { ChevronDown, ChevronRight, Funnel, Star } from "lucide-react-native";
@@ -282,8 +283,17 @@ export default function Transacoes() {
   const [showFilterMenu, setShowFilterMenu] = React.useState(false);
 
   const handleRefresh = React.useCallback(async () => {
+    setShowSortMenu(false);
+    setShowFilterMenu(false);
     await Promise.all([refetch(), refreshUser()]);
   }, [refetch, refreshUser]);
+
+  const handleScroll = React.useCallback(() => {
+    if (showSortMenu || showFilterMenu) {
+      setShowSortMenu(false);
+      setShowFilterMenu(false);
+    }
+  }, [showSortMenu, showFilterMenu]);
 
   // Aplica filtro e ordenação
   const filtered = useMemo(() => applySort(applyFilter(data, filterOption), sortOption), [data, filterOption, sortOption]);
@@ -317,6 +327,8 @@ export default function Transacoes() {
           style={styles.content}
           showsVerticalScrollIndicator={false}
           onRefresh={handleRefresh}
+          onScroll={handleScroll}
+          scrollEventThrottle={16}
         >
           {/* Barra de Ordenar + Filtro */}
           <View style={styles.toolbarRow}>
@@ -329,23 +341,28 @@ export default function Transacoes() {
                 <ChevronDown size={14} color={colors.textPrimary}/>
               </TouchableOpacity>
 
-              {showSortMenu && (
-                <View style={styles.dropdownMenu}>
-                  {SORT_OPTIONS.map((opt) => (
-                    <TouchableOpacity
-                      key={opt.key}
-                      style={styles.dropdownItem}
-                      onPress={() => { setSortOption(opt.key); setShowSortMenu(false); }}
-                    >
-                      <Text style={[
-                        styles.dropdownItemText,
-                        sortOption === opt.key && styles.dropdownItemActive,
-                      ]}>
-                        {opt.label}
-                      </Text>
-                    </TouchableOpacity>
-                  ))}
-                </View>
+               {showSortMenu && (
+                <>
+                  <TouchableWithoutFeedback onPress={() => setShowSortMenu(false)}>
+                    <View style={styles.backdrop} />
+                  </TouchableWithoutFeedback>
+                  <View style={styles.dropdownMenu}>
+                    {SORT_OPTIONS.map((opt) => (
+                      <TouchableOpacity
+                        key={opt.key}
+                        style={styles.dropdownItem}
+                        onPress={() => { setSortOption(opt.key); setShowSortMenu(false); }}
+                      >
+                        <Text style={[
+                          styles.dropdownItemText,
+                          sortOption === opt.key && styles.dropdownItemActive,
+                        ]}>
+                          {opt.label}
+                        </Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                </>
               )}
             </View>
 
@@ -360,22 +377,27 @@ export default function Transacoes() {
               </TouchableOpacity>
 
               {showFilterMenu && (
-                <View style={[styles.dropdownMenu, styles.dropdownMenuRight]}>
-                  {FILTER_OPTIONS.map((opt) => (
-                    <TouchableOpacity
-                      key={opt.key}
-                      style={styles.dropdownItem}
-                      onPress={() => { setFilterOption(opt.key); setShowFilterMenu(false); }}
-                    >
-                      <Text style={[
-                        styles.dropdownItemText,
-                        filterOption === opt.key && styles.dropdownItemActive,
-                      ]}>
-                        {opt.label}
-                      </Text>
-                    </TouchableOpacity>
-                  ))}
-                </View>
+                <>
+                  <TouchableWithoutFeedback onPress={() => setShowFilterMenu(false)}>
+                    <View style={styles.backdrop} />
+                  </TouchableWithoutFeedback>
+                  <View style={[styles.dropdownMenu, styles.dropdownMenuRight]}>
+                    {FILTER_OPTIONS.map((opt) => (
+                      <TouchableOpacity
+                        key={opt.key}
+                        style={styles.dropdownItem}
+                        onPress={() => { setFilterOption(opt.key); setShowFilterMenu(false); }}
+                      >
+                        <Text style={[
+                          styles.dropdownItemText,
+                          filterOption === opt.key && styles.dropdownItemActive,
+                        ]}>
+                          {opt.label}
+                        </Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                </>
               )}
             </View>
           </View>
