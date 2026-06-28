@@ -51,6 +51,9 @@ function RootNavigator() {
 
       {/* Tela de acompanhamento do resgate */}
       <Stack.Screen name="ticket/resgate/[id]" />
+
+      {/* Tela de acompanhamento do acúmulo */}
+      <Stack.Screen name="ticket/acumulo/[id]" />
     </Stack>
   );
 }

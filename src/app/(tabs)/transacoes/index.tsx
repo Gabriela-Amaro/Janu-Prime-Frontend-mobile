@@ -387,7 +387,7 @@ export default function Transacoes() {
                   onAcompanhar={
                     t.tipo === "debito"
                       ? () => router.push(`/ticket/resgate/${t.id}`)
-                      : undefined
+                      : () => router.push(`/ticket/acumulo/${t.id}`)
                   }
                 />
               ))}
