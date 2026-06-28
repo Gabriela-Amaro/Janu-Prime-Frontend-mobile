@@ -1,36 +1,28 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { Star } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
-  Image,
   ScrollView,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { BackButton } from "../../../components/Buttons/Back";
 import { colors } from "../../../constants/Colors";
 import { api, ApiError, BASE_URL } from "../../../services/api";
 import type { TicketDebito } from "../../../types";
-import { styles } from "./styles";
+import { TicketHeader } from "../../../components/TicketDetail/TicketHeader";
+import { EstablishmentHeader } from "../../../components/TicketDetail/EstablishmentHeader";
+import { TicketCodeInfo } from "../../../components/TicketDetail/TicketCodeInfo";
+import { TicketDetailCard } from "../../../components/TicketDetail/TicketDetailCard";
+import { TicketValues } from "../../../components/TicketDetail/TicketValues";
+import { TicketCancelButton } from "../../../components/TicketDetail/TicketCancelButton";
+import { TicketStatusBar } from "../../../components/TicketDetail/TicketStatusBar";
+import { styles } from "../../../components/TicketDetail/styles";
 
 // ─── Helpers ─────────────────────────────────────────
 
-/** Formata data ISO para "Sex, 25 Janeiro 2025" */
-function formatDate(dateStr: string): string {
-  const date = new Date(dateStr);
-  const dias = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
-  const meses = [
-    "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
-    "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro",
-  ];
-  return `${dias[date.getDay()]}, ${date.getDate()} ${meses[date.getMonth()]} ${date.getFullYear()}`;
-}
-
-/** Retorna a config visual da barra de status */
 function getStatusConfig(status: string) {
   switch (status) {
     case "ABERTO":
@@ -150,135 +142,40 @@ export default function AcompanharResgateScreen() {
   const statusConfig = getStatusConfig(ticket.status);
   const canCancel = ticket.status === "ABERTO";
 
-  // ─── Estrelas ────────────────────────────────────
-  const renderStars = (rating: number | null) => {
-    const rounded = Math.round(rating ?? 0);
-    return Array.from({ length: 5 }).map((_, i) => (
-      <Star
-        key={i}
-        size={12}
-        color={colors.textPrimary}
-        fill={i < rounded ? colors.textPrimary : "transparent"}
-        style={{ marginRight: 2 }}
-      />
-    ));
-  };
-
-  // ─── Render ──────────────────────────────────────
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
-      {/* Header */}
-      <View style={styles.header}>
-        <BackButton color={colors.textPrimary} style={styles.backButton} />
-        <Text style={styles.headerTitle}>Resgate de Pontos</Text>
-      </View>
+      <TicketHeader title="Resgate de Pontos" />
 
       <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
-        {/* Info do Estabelecimento */}
-        <View style={styles.establishmentSection}>
-          <View style={styles.establishmentInfo}>
-            <Text style={styles.establishmentName}>{storeName}</Text>
-            <View style={styles.ratingRow}>
-              {ticket.media_avaliacoes != null ? (
-                <>
-                  <Text style={styles.ratingText}>
-                    {ticket.media_avaliacoes.toFixed(1)}
-                  </Text>
-                  <View style={styles.ratingStars}>
-                    {renderStars(ticket.media_avaliacoes)}
-                  </View>
-                  <Text style={styles.ratingCount}>
-                    {ticket.total_avaliacoes} Avaliações
-                  </Text>
-                </>
-              ) : (
-                <Text style={styles.ratingText}>Novo</Text>
-              )}
-            </View>
-          </View>
+        <EstablishmentHeader
+          name={storeName}
+          logoUrl={logoUrl}
+          mediaAvaliacoes={ticket.media_avaliacoes}
+          totalAvaliacoes={ticket.total_avaliacoes}
+        />
 
-          {logoUrl ? (
-            <Image source={{ uri: logoUrl }} style={styles.establishmentLogo} />
-          ) : (
-            <View style={styles.logoPlaceholder}>
-              <Text style={styles.logoPlaceholderText}>
-                {storeName.charAt(0).toUpperCase()}
-              </Text>
-            </View>
-          )}
-        </View>
+        <TicketCodeInfo codigo={ticket.codigo} createdAt={ticket.created_at} />
 
-        {/* Código do Ticket + Data */}
-        <View style={styles.ticketInfoSection}>
-          <Text style={styles.ticketCode}>Código do Ticket: {ticket.codigo}</Text>
-        </View>
-        <View style={{paddingHorizontal: 20, paddingTop: 20}}>
-          <Text style={styles.ticketDate}>{formatDate(ticket.created_at)}</Text>
-        </View>
+        <TicketDetailCard
+          imageUri={productImageUrl}
+          placeholderText="Sem Foto"
+          title={ticket.nome_produto}
+          subTitle={ticket.descricao_produto}
+          subTitleColor={colors.orange}
+          extraText="Quantidade: 1"
+        />
 
-        {/* Produto Card */}
-        <View style={styles.productCard}>
-          {productImageUrl ? (
-            <Image source={{ uri: productImageUrl }} style={styles.productImage} />
-          ) : (
-            <View style={styles.productImagePlaceholder}>
-              <Text style={styles.placeholderText}>Sem Foto</Text>
-            </View>
-          )}
-          <View style={styles.productDetails}>
-            <Text style={styles.productName}>{ticket.nome_produto}</Text>
-            {ticket.descricao_produto ? (
-              <Text style={styles.productDesc} numberOfLines={3}>
-                {ticket.descricao_produto}
-              </Text>
-            ) : null}
-            <Text style={styles.quantityText}>Quantidade: 1</Text>
-          </View>
-        </View>
-
-        {/* Valores */}
-        <View style={styles.valuesSection}>
-          <Text style={styles.sectionTitle}>Valores</Text>
-
-          <View style={styles.valueRow}>
-            <Text style={styles.valueLabel}>Subtotal</Text>
-            <Text style={styles.valueAmount}>JP {ticket.pontos}</Text>
-          </View>
-
-          <View style={styles.totalRow}>
-            <Text style={styles.totalLabel}>Total</Text>
-            <Text style={styles.totalAmount}>JP {ticket.pontos}</Text>
-          </View>
-        </View>
+        <TicketValues
+          rows={[{ label: "Subtotal", amount: `JP ${ticket.pontos}` }]}
+          totalLabel="Total"
+          totalAmount={`JP ${ticket.pontos}`}
+        />
         <View style={{ height: 80 }} />
       </ScrollView>
 
-      {/* Footer com botão cancelar */}
-      {canCancel && (
-        <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, 12) }]}>
-          <TouchableOpacity
-            style={[styles.cancelButton, cancelling && styles.cancelButtonDisabled]}
-            onPress={handleCancelar}
-            disabled={cancelling}
-          >
-            {cancelling ? (
-              <ActivityIndicator size="small" color={colors.white} />
-            ) : (
-              <Text style={styles.cancelButtonText}>Cancelar</Text>
-            )}
-          </TouchableOpacity>
-        </View>
-      )}
+      {canCancel && <TicketCancelButton cancelling={cancelling} onPress={handleCancelar} />}
 
-      {/* Barra de status */}
-      <View
-        style={[
-          styles.statusBar,
-          { backgroundColor: statusConfig.color, paddingBottom: Math.max(insets.bottom, 8) },
-        ]}
-      >
-        <Text style={styles.statusBarText}>{statusConfig.label}</Text>
-      </View>
+      <TicketStatusBar label={statusConfig.label} color={statusConfig.color} />
     </View>
   );
 }

@@ -1,36 +1,28 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { Star } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
-  Image,
   ScrollView,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { BackButton } from "../../../components/Buttons/Back";
 import { colors } from "../../../constants/Colors";
 import { api, ApiError, BASE_URL } from "../../../services/api";
 import type { TicketCredito } from "../../../types";
-import { styles } from "./styles";
+import { TicketHeader } from "../../../components/TicketDetail/TicketHeader";
+import { EstablishmentHeader } from "../../../components/TicketDetail/EstablishmentHeader";
+import { TicketCodeInfo } from "../../../components/TicketDetail/TicketCodeInfo";
+import { TicketDetailCard } from "../../../components/TicketDetail/TicketDetailCard";
+import { TicketValues } from "../../../components/TicketDetail/TicketValues";
+import { TicketCancelButton } from "../../../components/TicketDetail/TicketCancelButton";
+import { TicketStatusBar } from "../../../components/TicketDetail/TicketStatusBar";
+import { styles } from "../../../components/TicketDetail/styles";
 
 // ─── Helpers ─────────────────────────────────────────
 
-/** Formata data ISO para "Sex, 25 Janeiro 2025" */
-function formatDate(dateStr: string): string {
-  const date = new Date(dateStr);
-  const dias = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
-  const meses = [
-    "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
-    "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro",
-  ];
-  return `${dias[date.getDay()]}, ${date.getDate()} ${meses[date.getMonth()]} ${date.getFullYear()}`;
-}
-
-/** Formata data ISO para "DD/MM/YYYY" */
 function formatShortDate(dateStr: string): string {
   const date = new Date(dateStr);
   const day = String(date.getDate()).padStart(2, "0");
@@ -39,13 +31,11 @@ function formatShortDate(dateStr: string): string {
   return `${day}/${month}/${year}`;
 }
 
-/** Formata valor decimal (string) para "200,00" */
 function formatCurrency(value: string | number): string {
   const num = typeof value === "string" ? parseFloat(value) : value;
   return num.toFixed(2).replace(".", ",");
 }
 
-/** Retorna a config visual da barra de status */
 function getStatusConfig(status: string) {
   switch (status) {
     case "ABERTO":
@@ -163,91 +153,29 @@ export default function AcompanharAcumuloScreen() {
   const statusConfig = getStatusConfig(ticket.status);
   const canCancel = ticket.status === "ABERTO";
 
-  // ─── Estrelas ────────────────────────────────────
-  const renderStars = (rating: number | null) => {
-    const rounded = Math.round(rating ?? 0);
-    return Array.from({ length: 5 }).map((_, i) => (
-      <Star
-        key={i}
-        size={12}
-        color={colors.textPrimary}
-        fill={i < rounded ? colors.textPrimary : "transparent"}
-        style={{ marginRight: 2 }}
-      />
-    ));
-  };
-
-  // ─── Render ──────────────────────────────────────
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
-      {/* Header */}
-      <View style={styles.header}>
-        <BackButton color={colors.textPrimary} style={styles.backButton} />
-        <Text style={styles.headerTitle}>Acumulo de Pontos</Text>
-      </View>
+      <TicketHeader title="Acumulo de Pontos" />
 
       <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
-        {/* Info do Estabelecimento */}
-        <View style={styles.establishmentSection}>
-          <View style={styles.establishmentInfo}>
-            <Text style={styles.establishmentName}>{storeName}</Text>
-            <View style={styles.ratingRow}>
-              {ticket.media_avaliacoes != null ? (
-                <>
-                  <Text style={styles.ratingText}>
-                    {ticket.media_avaliacoes.toFixed(1)}
-                  </Text>
-                  <View style={styles.ratingStars}>
-                    {renderStars(ticket.media_avaliacoes)}
-                  </View>
-                  <Text style={styles.ratingCount}>
-                    {ticket.total_avaliacoes} Avaliações
-                  </Text>
-                </>
-              ) : (
-                <Text style={styles.ratingText}>Novo</Text>
-              )}
-            </View>
-          </View>
+        <EstablishmentHeader
+          name={storeName}
+          logoUrl={logoUrl}
+          mediaAvaliacoes={ticket.media_avaliacoes}
+          totalAvaliacoes={ticket.total_avaliacoes}
+        />
 
-          {logoUrl ? (
-            <Image source={{ uri: logoUrl }} style={styles.establishmentLogo} />
-          ) : (
-            <View style={styles.logoPlaceholder}>
-              <Text style={styles.logoPlaceholderText}>
-                {storeName.charAt(0).toUpperCase()}
-              </Text>
-            </View>
-          )}
-        </View>
+        <TicketCodeInfo codigo={ticket.codigo} createdAt={ticket.created_at} />
 
-        {/* Código do Ticket + Data */}
-        <View style={styles.ticketInfoSection}>
-          <Text style={styles.ticketCode}>Código do Ticket: {ticket.codigo}</Text>
-        </View>
-        <View style={{paddingHorizontal: 20, paddingTop: 20}}>
-          <Text style={styles.ticketDate}>{formatDate(ticket.created_at)}</Text>
-        </View>
+        <TicketDetailCard
+          imageUri={notaImageUrl}
+          placeholderText="Sem Foto"
+          title={`Código da Nota: ${ticket.numero_nota}`}
+          subTitle={`Valor: ${formatCurrency(ticket.preco)}`}
+          subTitleColor={colors.textSecondary}
+          extraText={`Data de Emissão: ${formatShortDate(ticket.data_nota)}`}
+        />
 
-        {/* Nota Fiscal Card */}
-        <View style={styles.notaCard}>
-          {notaImageUrl ? (
-            <Image source={{ uri: notaImageUrl }} style={styles.notaImage} />
-          ) : (
-            <View style={styles.notaImagePlaceholder}>
-              <Text style={styles.placeholderText}>Sem Foto</Text>
-            </View>
-          )}
-          <View style={styles.notaDetails}>
-            <Text style={styles.notaNumero}>Código da Nota: {ticket.numero_nota}</Text>
-            <Text style={styles.notaValor}>Valor: {formatCurrency(ticket.preco)}</Text>
-            <Text style={styles.notaDataEmissao}>
-              Data de Emissão: {formatShortDate(ticket.data_nota)}
-            </Text>
-          </View>
-        </View>
-
-        {/* Observação (motivo de recusa) */}
         {ticket.observacao && ticket.status === "RECUSADO" && (
           <View style={styles.observacaoSection}>
             <Text style={styles.observacaoLabel}>Motivo da Recusa:</Text>
@@ -255,49 +183,17 @@ export default function AcompanharAcumuloScreen() {
           </View>
         )}
 
-        {/* Valores */}
-        <View style={styles.valuesSection}>
-          <Text style={styles.sectionTitle}>Valores</Text>
-
-          <View style={styles.valueRow}>
-            <Text style={styles.valueLabel}>Valor da Nota</Text>
-            <Text style={styles.valueAmount}>{formatCurrency(ticket.preco)}</Text>
-          </View>
-
-          <View style={styles.totalRow}>
-            <Text style={styles.totalLabel}>Total de Pontos</Text>
-            <Text style={styles.totalAmount}>JP {ticket.pontos ?? 0}</Text>
-          </View>
-        </View>
+        <TicketValues
+          rows={[{ label: "Valor da Nota", amount: formatCurrency(ticket.preco) }]}
+          totalLabel="Total de Pontos"
+          totalAmount={`JP ${ticket.pontos ?? 0}`}
+        />
         <View style={{ height: 80 }} />
       </ScrollView>
 
-      {/* Footer com botão cancelar */}
-      {canCancel && (
-        <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, 12) }]}>
-          <TouchableOpacity
-            style={[styles.cancelButton, cancelling && styles.cancelButtonDisabled]}
-            onPress={handleCancelar}
-            disabled={cancelling}
-          >
-            {cancelling ? (
-              <ActivityIndicator size="small" color={colors.white} />
-            ) : (
-              <Text style={styles.cancelButtonText}>Cancelar</Text>
-            )}
-          </TouchableOpacity>
-        </View>
-      )}
+      {canCancel && <TicketCancelButton cancelling={cancelling} onPress={handleCancelar} />}
 
-      {/* Barra de status */}
-      <View
-        style={[
-          styles.statusBar,
-          { backgroundColor: statusConfig.color, paddingBottom: Math.max(insets.bottom, 8) },
-        ]}
-      >
-        <Text style={styles.statusBarText}>{statusConfig.label}</Text>
-      </View>
+      <TicketStatusBar label={statusConfig.label} color={statusConfig.color} />
     </View>
   );
 }

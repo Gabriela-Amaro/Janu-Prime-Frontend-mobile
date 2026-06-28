@@ -1,6 +1,6 @@
 import { StyleSheet } from "react-native";
-import { colors } from "../../../constants/Colors";
-import { FontFamily, FontSize } from "../../../constants/Fonts";
+import { colors } from "../../constants/Colors";
+import { FontFamily, FontSize } from "../../constants/Fonts";
 
 export const styles = StyleSheet.create({
   // ─── Layout ─────────────────────────────────────────
@@ -29,7 +29,7 @@ export const styles = StyleSheet.create({
     color: colors.textPrimary,
   },
 
-  // ─── Info do Estabelecimento ────────────────────────
+  // ─── Establishment Section ──────────────────────────
   establishmentSection: {
     flexDirection: "row",
     alignItems: "center",
@@ -101,29 +101,33 @@ export const styles = StyleSheet.create({
     color: colors.textPrimary,
     marginBottom: 4,
   },
+  ticketDateContainer: {
+    paddingHorizontal: 20,
+    paddingTop: 20,
+  },
   ticketDate: {
     fontSize: FontSize.description,
     fontFamily: FontFamily.regular,
     color: colors.gray[500],
   },
 
-  // ─── Nota Fiscal Card ──────────────────────────────
-  notaCard: {
+  // ─── Detail Card (Generic) ──────────────────────────
+  cardContainer: {
     flexDirection: "row",
     padding: 20,
     alignItems: "flex-start",
     borderBottomWidth: 1,
     borderBottomColor: colors.separator,
   },
-  notaImage: {
-    width: 80,
+  cardImage: {
+    width: 90,
     height: 90,
-    borderRadius: 8,
+    borderRadius: 12,
   },
-  notaImagePlaceholder: {
-    width: 80,
+  cardImagePlaceholder: {
+    width: 90,
     height: 90,
-    borderRadius: 8,
+    borderRadius: 12,
     backgroundColor: colors.brown[100],
     justifyContent: "center",
     alignItems: "center",
@@ -133,24 +137,23 @@ export const styles = StyleSheet.create({
     fontSize: FontSize.small,
     fontFamily: FontFamily.regular,
   },
-  notaDetails: {
+  cardDetails: {
     flex: 1,
     marginLeft: 16,
   },
-  notaNumero: {
+  cardTitle: {
     fontSize: FontSize.body,
     fontFamily: FontFamily.bold,
     color: colors.textPrimary,
     marginBottom: 4,
   },
-  notaValor: {
-    fontSize: FontSize.description,
+  cardSubtitle: {
+    fontSize: FontSize.small,
     fontFamily: FontFamily.regular,
-    color: colors.textSecondary,
     lineHeight: 18,
     marginBottom: 6,
   },
-  notaDataEmissao: {
+  cardExtra: {
     fontSize: FontSize.small,
     fontFamily: FontFamily.regular,
     color: colors.gray[500],
@@ -239,6 +242,24 @@ export const styles = StyleSheet.create({
     fontFamily: FontFamily.regular,
   },
 
+  // ─── Observação (motivo de recusa) ─────────────────
+  observacaoSection: {
+    paddingHorizontal: 20,
+    paddingBottom: 16,
+  },
+  observacaoLabel: {
+    fontSize: FontSize.description,
+    fontFamily: FontFamily.bold,
+    color: colors.errorDark,
+    marginBottom: 4,
+  },
+  observacaoText: {
+    fontSize: FontSize.description,
+    fontFamily: FontFamily.regular,
+    color: colors.gray[700],
+    lineHeight: 20,
+  },
+
   // ─── Loading / Error ───────────────────────────────
   loadingContainer: {
     flex: 1,
@@ -272,23 +293,5 @@ export const styles = StyleSheet.create({
     color: colors.white,
     fontSize: FontSize.body,
     fontFamily: FontFamily.bold,
-  },
-
-  // ─── Observação (motivo de recusa) ─────────────────
-  observacaoSection: {
-    paddingHorizontal: 20,
-    paddingBottom: 16,
-  },
-  observacaoLabel: {
-    fontSize: FontSize.description,
-    fontFamily: FontFamily.bold,
-    color: colors.errorDark,
-    marginBottom: 4,
-  },
-  observacaoText: {
-    fontSize: FontSize.description,
-    fontFamily: FontFamily.regular,
-    color: colors.gray[700],
-    lineHeight: 20,
   },
 });
