@@ -1,3 +1,4 @@
+import { useRouter } from "expo-router";
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { colors } from "../../constants/Colors";
@@ -9,8 +10,9 @@ interface PointsBadgeProps {
 }
 
 export function PointsBadge({ points }: PointsBadgeProps) {
+  const router = useRouter();
   return (
-    <TouchableOpacity onPress={() => {}} style={styles.container}>
+    <TouchableOpacity onPress={() => router.navigate("/(tabs)/transacoes")} style={styles.container}>
       <View style={styles.textContainer}>
         <Text style={styles.text}>{points}</Text>
       </View>
