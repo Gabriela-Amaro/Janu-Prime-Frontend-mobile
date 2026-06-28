@@ -41,3 +41,9 @@ yarn-error.*
 /android
 
 rascunho.md
+
+# VS Code
+.vscode/
+
+# Secrets
+.env
